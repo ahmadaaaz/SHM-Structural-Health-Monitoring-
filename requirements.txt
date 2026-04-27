@@ -1,0 +1,5 @@
+pandas
+numpy
+scipy.interpolate
+scipy.ndimage
+matplotlib.pyplot
