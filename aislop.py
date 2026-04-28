@@ -8,125 +8,85 @@ import matplotlib.pyplot as plt
 # ==========================================
 # 1. UI SETUP
 # ==========================================
-st.set_page_config(page_title="Wing SHM Platform", layout="wide")
-st.title("🛩️ Structural Health Monitoring (SHM) Dashboard")
-st.markdown("Upload your ANSYS `.txt` node exports to detect structural damage using Modified Laplacian operators.")
+st.set_page_config(page_title="Advanced Wing SHM", layout="wide")
+st.title("🛩️ Advanced Damage Localization Platform")
 
-# Sidebar for File Uploads
-st.sidebar.header("Upload Data")
-healthy_file = st.sidebar.file_uploader("Upload Healthy File (.txt)", type=['txt', 'csv'])
-damaged_file = st.sidebar.file_uploader("Upload Damaged File (.txt)", type=['txt', 'csv'])
+st.sidebar.header("Data Input")
+h_file = st.sidebar.file_uploader("Healthy State", type=['txt', 'csv'])
+d_file = st.sidebar.file_uploader("Damaged State", type=['txt', 'csv'])
 
-# Control Panel for user adjustments
-st.sidebar.header("Analysis Settings")
-resolution = st.sidebar.slider("Grid Resolution (Higher = slower but smoother)", 10, 5000, 300)
-z_threshold = st.sidebar.slider("Z-Score Threshold (Filters noise)", 1.0, 5.0, 3.0)
-blur_amount = st.sidebar.slider("Visual Blur (Sigma)", 0.0, 5.0, 1.5)
+st.sidebar.header("Filtering & Stability")
+resolution = st.sidebar.slider("Grid Resolution", 100, 500, 300)
+z_thresh = st.sidebar.slider("Z-Score Threshold", 0.5, 10.0, 3.5)
+# NEW: Erosion Slider to cut off noisy edges
+edge_trim = st.sidebar.slider("Edge Trim (Pixels)", 0, 20, 5)
 
 # ==========================================
-# 2. CORE FUNCTIONS
+# 2. UPDATED FUNCTIONS
 # ==========================================
 
-def load_and_clean(file):
-    """Reads the ANSYS file, cleans headers, and extracts the top skin (Z=0)."""
+def load_and_project(file):
+    """
+    Handles 3D files. Projects all nodes to a 2D plane.
+    If multiple nodes exist at same X,Y (Top/Bottom skin), it takes the Top (Max Z).
+    """
     df = pd.read_csv(file, sep='\t')
-    df.columns = df.columns.str.strip() # Remove spaces from ANSYS headers
-    df_top = df[df['Z Location (m)'] == 0] # Filter for surface only
-    return df_top
+    df.columns = df.columns.str.strip()
+    
+    # Sort by Z and keep the highest node for every X,Y coordinate 
+    # (This ensures we only look at the top skin curvature)
+    df = df.sort_values('Z Location (m)').drop_duplicates(subset=['X Location (m)', 'Y Location (m)'], keep='last')
+    return df
 
-def create_dynamic_grid(df, res_x):
-    """Automatically sizes the matrix grid based on the wing's actual dimensions."""
-    x_min, x_max = df['X Location (m)'].min(), df['X Location (m)'].max()
-    y_min, y_max = df['Y Location (m)'].min(), df['Y Location (m)'].max()
+def calculate_full_energy(W, nu=0.33):
+    """Full Cornwell Equation with Bending, Torsion, and Poisson effects."""
+    dy, dx = np.gradient(W)
+    d2y, _ = np.gradient(dy)
+    _, d2x = np.gradient(dx)
+    _, d2xy = np.gradient(dy) # Cross derivative for torsion
     
-    # Calculate aspect ratio so the wing isn't stretched
-    aspect_ratio = (x_max - x_min) / (y_max - y_min)
-    res_y = int(res_x / aspect_ratio)
-    
-    # Create the blank canvas
-    grid_x, grid_y = np.mgrid[x_min:x_max:complex(0, res_x), y_min:y_max:complex(0, res_y)]
-    return grid_x, grid_y
-
-def calculate_curvature_energy(W_matrix):
-    """The Math: Calculates (d^2w/dx^2)^2 + (d^2w/dy^2)^2 using finite differences."""
-    # First derivative (Slope)
-    slope_y, slope_x = np.gradient(W_matrix)
-    
-    # Second derivative (Curvature)
-    _, d2w_dx2 = np.gradient(slope_x)
-    d2w_dy2, _ = np.gradient(slope_y)
-    
-    # Strain Energy Proxy
-    energy = (d2w_dx2**2) + (d2w_dy2**2)
-    return energy
+    # Equation: (d2x^2 + d2y^2) + 2*nu*(d2x*d2y) + 2*(1-nu)*(d2xy^2)
+    return (d2x**2 + d2y**2) + (2 * nu * d2x * d2y) + (2 * (1 - nu) * d2xy**2)
 
 # ==========================================
-# 3. MAIN EXECUTION PIPELINE
+# 3. ANALYSIS PIPELINE
 # ==========================================
 
-if healthy_file and damaged_file:
-    if st.button("Run Damage Analysis"):
-        with st.spinner("Processing finite differences..."):
-            
-            # Step A: Load Data
-            h_df = load_and_clean(healthy_file)
-            d_df = load_and_clean(damaged_file)
-            
-            # Step B: Create Grid & Interpolate
-            grid_x, grid_y = create_dynamic_grid(h_df, resolution)
-            
-            w_h = griddata((h_df['X Location (m)'], h_df['Y Location (m)']), 
-                           h_df['Total Deformation (m)'], (grid_x, grid_y), method='cubic')
-            w_d = griddata((d_df['X Location (m)'], d_df['Y Location (m)']), 
-                           d_df['Total Deformation (m)'], (grid_x, grid_y), method='cubic')
-            
-            # Mask tracking: Remember where the wing 'exists' before we replace NaNs
-            wing_mask = ~np.isnan(w_h)
-            
-            # Replace NaNs with 0 so math doesn't break
-            w_h = np.nan_to_num(w_h)
-            w_d = np.nan_to_num(w_d)
-            
-            # Step C: The Physics (Curvature)
-            energy_h = calculate_curvature_energy(w_h)
-            energy_d = calculate_curvature_energy(w_d)
-            
-            # Absolute Difference in Curvature Energy
-            energy_diff = np.abs(energy_d - energy_h)
-            
-            # Step D: Filtering (Z-Score & Blur)
-            # Calculate Z-score only on the actual wing surface, ignoring empty space
-            mean_e = np.mean(energy_diff[wing_mask])
-            std_e = np.std(energy_diff[wing_mask])
-            z_score_matrix = (energy_diff - mean_e) / std_e
-            
-            # Apply mathematical threshold (Kill the noise)
-            z_score_matrix[z_score_matrix < z_threshold] = 0
-            
-            # Apply visual filter (Gaussian glow)
-            clean_heatmap = ndimage.gaussian_filter(z_score_matrix, sigma=blur_amount)
-            
-            # Force everything outside the wing boundary to be transparent/zero again
-            clean_heatmap[~wing_mask] = np.nan
-            
-            # Step E: Visualization
-            st.write("### Analysis Results")
-            fig, ax = plt.subplots(figsize=(10, 6))
-            
-            # Draw the heatmap
-            contour = ax.contourf(grid_x, grid_y, clean_heatmap, levels=100, cmap='inferno')
-            ax.set_title(f"Damage Localization Map (Z-Threshold: {z_threshold})")
-            ax.set_xlabel("Span (X)")
-            ax.set_ylabel("Chord (Y)")
-            fig.colorbar(contour, label="Damage Severity (Filtered Z-Score)")
-            
-            # Send plot to Streamlit
-            st.pyplot(fig)
-            
-            # Find exact coordinates of maximum damage
-            max_val = np.nanmax(clean_heatmap)
-            if max_val > 0:
-                max_idx = np.unravel_index(np.nanargmax(clean_heatmap), clean_heatmap.shape)
-                st.success(f"**Critical Damage Detected at:** X = {grid_x[max_idx]:.3f} m, Y = {grid_y[max_idx]:.3f} m")
-            else:
-                st.info("No damage detected above the current Z-Score threshold.")
+if h_file and d_file:
+    # 1. Load and Project
+    h_df = load_and_project(h_file)
+    d_df = load_and_project(d_file)
+    
+    # 2. Create Dynamic Grid
+    x_min, x_max = h_df['X Location (m)'].min(), h_df['X Location (m)'].max()
+    y_min, y_max = h_df['Y Location (m)'].min(), h_df['Y Location (m)'].max()
+    grid_x, grid_y = np.mgrid[x_min:x_max:complex(0, resolution), y_min:y_max:complex(0, int(resolution/((x_max-x_min)/(y_max-y_min))))]
+    
+    # 3. Interpolate
+    w_h = griddata((h_df['X Location (m)'], h_df['Y Location (m)']), h_df['Total Deformation (m)'], (grid_x, grid_y), method='cubic')
+    w_d = griddata((d_df['X Location (m)'], d_df['Y Location (m)']), d_df['Total Deformation (m)'], (grid_x, grid_y), method='cubic')
+    
+    # Create Mask of the wing shape
+    mask = ~np.isnan(w_h)
+    
+    # NEW: Erode the mask to remove edge artifacts
+    if edge_trim > 0:
+        mask = ndimage.binary_erosion(mask, iterations=edge_trim)
+    
+    # 4. Math Execution
+    energy_h = calculate_full_energy(np.nan_to_num(w_h))
+    energy_d = calculate_full_energy(np.nan_to_num(w_d))
+    diff = np.abs(energy_d - energy_h)
+    
+    # 5. Z-Score (Only calculate on the masked/eroded area)
+    valid_data = diff[mask]
+    z_score = (diff - np.mean(valid_data)) / np.std(valid_data)
+    z_score[z_score < z_thresh] = 0
+    z_score[~mask] = np.nan # Hide anything outside the wing or in the trim zone
+    
+    # 6. Plotting
+    fig, ax = plt.subplots(figsize=(12, 5))
+    im = ax.imshow(z_score.T, origin='lower', extent=[x_min, x_max, y_min, y_max], cmap='magma', aspect='auto')
+    plt.colorbar(im, label="Damage Intensity (Z-Score)")
+    ax.set_title("Damage Localization Heatmap (Eroded Boundaries)")
+    st.pyplot(fig)
