@@ -19,7 +19,7 @@ damaged_file = st.sidebar.file_uploader("Upload Damaged File (.txt)", type=['txt
 
 # Control Panel for user adjustments
 st.sidebar.header("Analysis Settings")
-resolution = st.sidebar.slider("Grid Resolution (Higher = slower but smoother)", 100, 500, 300)
+resolution = st.sidebar.slider("Grid Resolution (Higher = slower but smoother)", 10, 5000, 300)
 z_threshold = st.sidebar.slider("Z-Score Threshold (Filters noise)", 1.0, 5.0, 3.0)
 blur_amount = st.sidebar.slider("Visual Blur (Sigma)", 0.0, 5.0, 1.5)
 
