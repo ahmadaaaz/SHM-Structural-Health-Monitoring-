@@ -1,1 +1,0 @@
-# SHM-Structural-Health-Monitoring-
