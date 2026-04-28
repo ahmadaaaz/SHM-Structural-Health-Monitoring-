@@ -16,7 +16,7 @@ h_file = st.sidebar.file_uploader("Healthy State", type=['txt', 'csv'])
 d_file = st.sidebar.file_uploader("Damaged State", type=['txt', 'csv'])
 
 st.sidebar.header("Filtering & Stability")
-resolution = st.sidebar.slider("Grid Resolution", 100, 500, 300)
+resolution = st.sidebar.slider("Grid Resolution", 50, 300, 2000)
 z_thresh = st.sidebar.slider("Z-Score Threshold", 0.5, 10.0, 3.5)
 # NEW: Erosion Slider to cut off noisy edges
 edge_trim = st.sidebar.slider("Edge Trim (Pixels)", 0, 20, 5)
