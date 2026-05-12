@@ -164,8 +164,14 @@ elif used_method == "3":
         elif s_p is "seri":
             di_total = ((di1/np.nanmax(di1)) + (di2/np.nanmax(di2)) + (di3/np.nanmax(di3)))/ ((di1/np.nanmax(di1)) * (di2/np.nanmax(di2)) * (di3/np.nanmax(di3)))
         elif s_p is "Product (Strict)":
-            di_total = di_total / np.nanmax(di_total)
+            di1_c = np.maximum(di1, 0)
+            di2_c = np.maximum(di2, 0)
+            di3_c = np.maximum(di3, 0)
+            di_total = di1_c * di2_c * di3_c        
         elif s_p is "RMS (Balanced)":
+            di1_c = np.maximum(di1, 0)
+            di2_c = np.maximum(di2, 0)
+            di3_c = np.maximum(di3, 0)
             di_total = np.sqrt((di1_c**2 + di2_c**2 + di3_c**2) / 3)
         
         fig, ax = plt.subplots(figsize=(10, 4))
