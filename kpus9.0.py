@@ -165,7 +165,9 @@ elif used_method == "3":
             di_total = ((di1/np.nanmax(di1)) + (di2/np.nanmax(di2)) + (di3/np.nanmax(di3)))/ ((di1/np.nanmax(di1)) * (di2/np.nanmax(di2)) * (di3/np.nanmax(di3)))
         import matplotlib.pyplot as plt
         fig, ax = plt.subplots(figsize=(10, 4))
-        im = ax.imshow(di_total.T, origin='lower', extent=[xi.min(), xi.max(), yi.min(), yi.max()], cmap='jet')
+        vmax_val = np.nanpercentile(di_total, 99) # Look at the 99th
+        heat_color = st.selectbox("Choose color", ['viridis', 'plasma', 'inferno', 'magma', 'cividis'])
+        im = ax.imshow(di_total.T, origin='lower', extent=[xi.min(), xi.max(), yi.min(), yi.max()], cmap=heat_color, vmax=vmax_val)
         plt.colorbar(im, label="Fused Intensity")
         st.pyplot(fig)
     else:
