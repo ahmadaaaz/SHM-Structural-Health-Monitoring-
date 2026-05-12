@@ -156,7 +156,11 @@ elif used_method == "3":
         di1, xi, yi, raw_d = get_damage_index(h1, d1, resolution, pre_smooth, epsilon_pct)
         di2, _, _, _ = get_damage_index(h2, d2, resolution, pre_smooth, epsilon_pct)
         di3, _, _, _ = get_damage_index(h3, d3, resolution, pre_smooth, epsilon_pct)
-        di_total = (di1/np.nanmax(di1)) + (di2/np.nanmax(di2)) + (di3/np.nanmax(di3))
+        s_p = st.sidebar.selectbox("Seri/Paralel", ["seri", "paralel"])
+        if s_p is "seri":
+            di_total = (1/(di1/np.nanmax(di1)) + 1/(di2/np.nanmax(di2)) + 1/(di3/np.nanmax(di3)))**-1
+        elif s_p is "paralel":
+            di_total = (di1/np.nanmax(di1)) * (di2/np.nanmax(di2)) * (di3/np.nanmax(di3)) / ((di1/np.nanmax(di1)) + (di2/np.nanmax(di2)) + (di3/np.nanmax(di3)))
         import matplotlib.pyplot as plt
         fig, ax = plt.subplots(figsize=(10, 4))
         im = ax.imshow(di_total.T, origin='lower', extent=[xi.min(), xi.max(), yi.min(), yi.max()], cmap='jet')
