@@ -173,10 +173,11 @@ elif used_method == "3":
             di2_c = np.maximum(di2, 0)
             di3_c = np.maximum(di3, 0)
             di_total = np.sqrt((di1_c**2 + di2_c**2 + di3_c**2) / 3)
-        
+        if st.check("testing"):
+            di_total = di_total / np.nanmax(di_total)
         fig, ax = plt.subplots(figsize=(10, 4))
         vmax_val = np.nanpercentile(di_total, 99) # Look at the 99th
-        heat_color = st.selectbox("Choose color", ['viridis', 'plasma', 'inferno', 'magma', 'cividis'])
+        heat_color = st.sidebar.selectbox("Choose color", ['viridis', 'plasma', 'inferno', 'magma', 'cividis'])
         im = ax.imshow(di_total.T, origin='lower', extent=[xi.min(), xi.max(), yi.min(), yi.max()], cmap=heat_color, vmax=vmax_val)
         plt.colorbar(im, label="Fused Intensity")
         st.pyplot(fig)
