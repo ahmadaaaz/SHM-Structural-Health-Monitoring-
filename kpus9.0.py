@@ -173,7 +173,7 @@ elif used_method == "3":
             di2_c = np.maximum(di2, 0)
             di3_c = np.maximum(di3, 0)
             di_total = np.sqrt((di1_c**2 + di2_c**2 + di3_c**2) / 3)
-        if st.check("testing"):
+        if st.checkbox("testing"):
             di_total = di_total / np.nanmax(di_total)
         fig, ax = plt.subplots(figsize=(10, 4))
         vmax_val = np.nanpercentile(di_total, 99) # Look at the 99th
