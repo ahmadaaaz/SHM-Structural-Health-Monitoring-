@@ -11,7 +11,6 @@ st.write('# kpuhtyte')
 
 used_method = st.sidebar.selectbox("what method",["1","2","3"])
 heat_color = st.sidebar.selectbox("Choose color pallette", ['viridis', 'plasma', 'inferno', 'magma', 'cividis'])
-
 if used_method == "1":
     st.write('## ok')
 elif used_method == "2":
@@ -60,8 +59,8 @@ elif used_method == "2":
         w_d = griddata((d_df['X Location (m)'], d_df['Y Location (m)']), d_df['Total Deformation (m)'], (grid_x, grid_y), method=interp_method)
         
         mask = ~np.isnan(w_h)
-        mask_eroded = ndimage.binary_erosion(mask, iterations=3)
-
+        mask_eroded = ndimage.binary_erosion(mask, iterations=2)
+        
         w_h = np.nan_to_num(w_h)
         w_d = np.nan_to_num(w_d)
 
