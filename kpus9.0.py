@@ -10,6 +10,8 @@ st.set_page_config(page_title="SHM", page_icon="https://github.com/ahmadaaaz/SHM
 st.write('# kpuhtyte')
 
 used_method = st.sidebar.selectbox("what method",["1","2","3"])
+heat_color = st.sidebar.selectbox("Choose color pallette", ['viridis', 'plasma', 'inferno', 'magma', 'cividis'])
+
 if used_method == "1":
     st.write('## ok')
 elif used_method == "2":
@@ -88,7 +90,7 @@ elif used_method == "2":
         # Vmax sets the color scale to the 99th percentile, keeping one massive spike from ruining the colors
         vmax_val = np.nanpercentile(damage_index, 99) 
         im = ax.imshow(damage_index.T, origin='lower', extent=[x_min, x_max, y_min, y_max], 
-                       cmap='jet', aspect='auto', vmax=vmax_val)
+                       cmap=heat_color, aspect='auto', vmax=vmax_val)
         plt.colorbar(im, label="Damage Severity")
         ax.set_title("Damage Location Map")
         st.pyplot(fig)
@@ -177,7 +179,6 @@ elif used_method == "3":
             di_total = di_total / np.nanmax(di_total)
         fig, ax = plt.subplots(figsize=(10, 4))
         #vmax_val = np.nanpercentile(di_total, 99) # Look at the 99th
-        heat_color = st.sidebar.selectbox("Choose color", ['viridis', 'plasma', 'inferno', 'magma', 'cividis'])
         im = ax.imshow(di_total.T, origin='lower', extent=[xi.min(), xi.max(), yi.min(), yi.max()], cmap=heat_color) #vmax=vmax_val)
         plt.colorbar(im, label="Fused Intensity")
         st.pyplot(fig)
