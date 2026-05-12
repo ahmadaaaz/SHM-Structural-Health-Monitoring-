@@ -156,14 +156,18 @@ elif used_method == "3":
         di1, xi, yi, raw_d = get_damage_index(h1, d1, resolution, pre_smooth, epsilon_pct)
         di2, _, _, _ = get_damage_index(h2, d2, resolution, pre_smooth, epsilon_pct)
         di3, _, _, _ = get_damage_index(h3, d3, resolution, pre_smooth, epsilon_pct)
-        s_p = st.sidebar.selectbox("Seri/Paralel", ["normal", "seri", "paralel"])
+        s_p = st.sidebar.selectbox("Seri/Paralel", ["normal", "seri", "paralel","Product (Strict)", "RMS (Balanced)"])
         if s_p is "normal":
             di_total = ((di1/np.nanmax(di1)) + (di2/np.nanmax(di2)) + (di3/np.nanmax(di3)))
         elif s_p is "paralel":
             di_total = (1/(di1/np.nanmax(di1)) + 1/(di2/np.nanmax(di2)) + 1/(di3/np.nanmax(di3)))**-1
         elif s_p is "seri":
             di_total = ((di1/np.nanmax(di1)) + (di2/np.nanmax(di2)) + (di3/np.nanmax(di3)))/ ((di1/np.nanmax(di1)) * (di2/np.nanmax(di2)) * (di3/np.nanmax(di3)))
-        import matplotlib.pyplot as plt
+        elif s_p is "Product (Strict)":
+            di_total = di_total / np.nanmax(di_total)
+        elif s_p is "RMS (Balanced)":
+            di_total = np.sqrt((di1_c**2 + di2_c**2 + di3_c**2) / 3)
+        
         fig, ax = plt.subplots(figsize=(10, 4))
         vmax_val = np.nanpercentile(di_total, 99) # Look at the 99th
         heat_color = st.selectbox("Choose color", ['viridis', 'plasma', 'inferno', 'magma', 'cividis'])
