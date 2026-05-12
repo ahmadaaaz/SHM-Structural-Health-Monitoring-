@@ -97,8 +97,8 @@ elif used_method == "3":
     h2 = st.sidebar.file_uploader('Upload Healthy File 2', type="txt")
     h3 = st.sidebar.file_uploader('Upload Healthy File 3', type="txt")
     d1 = st.sidebar.file_uploader('Upload Damaged File 1', type="txt")
-    d2 = st.sidebar.file_uploader('Upload Damaged File 2')
-    d3 = st.sidebar.file_uploader('Upload Damaged File 3')
+    d2 = st.sidebar.file_uploader('Upload Damaged File 2', type="txt")
+    d3 = st.sidebar.file_uploader('Upload Damaged File 3', type="txt")
     st.sidebar.header("2. Grid & Interpolation")
     # Kept resolution reasonable to prevent high-frequency noise artifacts
     resolution = st.sidebar.slider("Grid Resolution (X-axis)", 50, 250, 150)
