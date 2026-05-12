@@ -157,18 +157,18 @@ elif used_method == "3":
         di2, _, _, _ = get_damage_index(h2, d2, resolution, pre_smooth, epsilon_pct)
         di3, _, _, _ = get_damage_index(h3, d3, resolution, pre_smooth, epsilon_pct)
         s_p = st.sidebar.selectbox("Seri/Paralel", ["normal", "seri", "paralel","Product (Strict)", "RMS (Balanced)"])
-        if s_p is "normal":
+        if s_p == "normal":
             di_total = ((di1/np.nanmax(di1)) + (di2/np.nanmax(di2)) + (di3/np.nanmax(di3)))
-        elif s_p is "paralel":
+        elif s_p == "paralel":
             di_total = (1/(di1/np.nanmax(di1)) + 1/(di2/np.nanmax(di2)) + 1/(di3/np.nanmax(di3)))**-1
-        elif s_p is "seri":
+        elif s_p == "seri":
             di_total = ((di1/np.nanmax(di1)) + (di2/np.nanmax(di2)) + (di3/np.nanmax(di3)))/ ((di1/np.nanmax(di1)) * (di2/np.nanmax(di2)) * (di3/np.nanmax(di3)))
-        elif s_p is "Product (Strict)":
+        elif s_p == "Product (Strict)":
             di1_c = np.maximum(di1, 0)
             di2_c = np.maximum(di2, 0)
             di3_c = np.maximum(di3, 0)
             di_total = di1_c * di2_c * di3_c        
-        elif s_p is "RMS (Balanced)":
+        elif s_p == "RMS (Balanced)":
             di1_c = np.maximum(di1, 0)
             di2_c = np.maximum(di2, 0)
             di3_c = np.maximum(di3, 0)
@@ -176,9 +176,9 @@ elif used_method == "3":
         if st.checkbox("testing"):
             di_total = di_total / np.nanmax(di_total)
         fig, ax = plt.subplots(figsize=(10, 4))
-        vmax_val = np.nanpercentile(di_total, 99) # Look at the 99th
+        #vmax_val = np.nanpercentile(di_total, 99) # Look at the 99th
         heat_color = st.sidebar.selectbox("Choose color", ['viridis', 'plasma', 'inferno', 'magma', 'cividis'])
-        im = ax.imshow(di_total.T, origin='lower', extent=[xi.min(), xi.max(), yi.min(), yi.max()], cmap=heat_color, vmax=vmax_val)
+        im = ax.imshow(di_total.T, origin='lower', extent=[xi.min(), xi.max(), yi.min(), yi.max()], cmap=heat_color) #vmax=vmax_val)
         plt.colorbar(im, label="Fused Intensity")
         st.pyplot(fig)
     else:
