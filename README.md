@@ -1,1 +1,1 @@
-# SHM-Structural-Health-Monitoring!-
+# SHM-Structural-Health-Monitoring-
