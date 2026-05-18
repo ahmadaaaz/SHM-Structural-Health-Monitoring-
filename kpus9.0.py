@@ -9,11 +9,9 @@ import matplotlib.pyplot as plt
 st.set_page_config(page_title="SHM", page_icon="https://github.com/ahmadaaaz/SHM-Structural-Health-Monitoring-/blob/1b40487d35657458dd4be5c577a0c1fc529e5b6f/ecf.png")
 st.write('# kpuhtyte')
 
-used_method = st.sidebar.selectbox("what method",["1","2","3"])
+used_method = st.sidebar.selectbox("what method",["2","3"])
 heat_color = st.sidebar.selectbox("Choose color pallette", ['viridis', 'plasma', 'inferno', 'magma', 'cividis'])
-if used_method == "1":
-    st.write('## ok')
-elif used_method == "2":
+if used_method == "2":
     healthy_file = st.sidebar.file_uploader('Upload Healthy File', type="txt")
     damaged_file = st.sidebar.file_uploader('Upload Damaged File')
     st.write('## maybe')
