@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 # setting up
 st.set_page_config(page_title="SHM", page_icon="https://github.com/ahmadaaaz/SHM-Structural-Health-Monitoring-/blob/1b40487d35657458dd4be5c577a0c1fc529e5b6f/ecf.png")
-st.write('## Panellerdeki Hasarı Titreşim yoluyla Tespiti')
+st.write('# Panellerdeki Hasarı Titreşim yoluyla Tespiti')
 
 used_method = st.sidebar.selectbox("what method",["1 mod","3 mods"])
 heat_color = st.sidebar.selectbox("Choose color pallette", ['viridis', 'plasma', 'inferno', 'magma', 'cividis'])
