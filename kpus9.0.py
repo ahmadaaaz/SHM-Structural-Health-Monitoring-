@@ -92,12 +92,12 @@ if used_method == "1 mod":
         st.pyplot(fig)
 elif used_method == "3 mods":
     with st.sidebar.expander("Healthy mods"):
-        h1 = st.sidebar.file_uploader('Upload Healthy File 1', type="txt")
-        h2 = st.sidebar.file_uploader('Upload Healthy File 2', type="txt")
-        h3 = st.sidebar.file_uploader('Upload Healthy File 3', type="txt")
-        d1 = st.sidebar.file_uploader('Upload Damaged File 1', type="txt")
-        d2 = st.sidebar.file_uploader('Upload Damaged File 2', type="txt")
-        d3 = st.sidebar.file_uploader('Upload Damaged File 3', type="txt")
+        h1 = st.file_uploader('Upload Healthy File 1', type="txt")
+        h2 = st.file_uploader('Upload Healthy File 2', type="txt")
+        h3 = st.file_uploader('Upload Healthy File 3', type="txt")
+        d1 = st.file_uploader('Upload Damaged File 1', type="txt")
+        d2 = st.file_uploader('Upload Damaged File 2', type="txt")
+        d3 = st.file_uploader('Upload Damaged File 3', type="txt")
     st.sidebar.header("2. Grid & Interpolation")
     # Kept resolution reasonable to prevent high-frequency noise artifacts
     resolution = st.sidebar.slider("Grid Resolution (X-axis)", 50, 250, 150)
