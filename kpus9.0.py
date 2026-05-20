@@ -79,10 +79,9 @@ if used_method == "1 mod":
         damage_index[damage_index < 0] = 0
         damage_index[~mask_eroded] = np.nan # Hide outside edges
 
-        #-----------------------    Code Walkthrough    -----------------------
+        #----------------------- need Code Walkthrough    -----------------------
         #st.write(h_df)
 
-        # --- Step 7: Visualization ---
         fig, ax = plt.subplots(figsize=(10, 4))
         # Vmax sets the color scale to the 99th percentile, keeping one massive spike from ruining the colors
         vmax_val = np.nanpercentile(damage_index, 99) 
@@ -92,12 +91,14 @@ if used_method == "1 mod":
         ax.set_title("Damage Location Map")
         st.pyplot(fig)
 elif used_method == "3 mods":
-    h1 = st.sidebar.file_uploader('Upload Healthy File 1', type="txt")
-    h2 = st.sidebar.file_uploader('Upload Healthy File 2', type="txt")
-    h3 = st.sidebar.file_uploader('Upload Healthy File 3', type="txt")
-    d1 = st.sidebar.file_uploader('Upload Damaged File 1', type="txt")
-    d2 = st.sidebar.file_uploader('Upload Damaged File 2', type="txt")
-    d3 = st.sidebar.file_uploader('Upload Damaged File 3', type="txt")
+    with st.expander("Healthy mods"):
+        h1 = st.sidebar.file_uploader('Upload Healthy File 1', type="txt")
+        h2 = st.sidebar.file_uploader('Upload Healthy File 2', type="txt")
+        h3 = st.sidebar.file_uploader('Upload Healthy File 3', type="txt")
+    with st.expander("Damaged mods"):
+        d1 = st.sidebar.file_uploader('Upload Damaged File 1', type="txt")
+        d2 = st.sidebar.file_uploader('Upload Damaged File 2', type="txt")
+        d3 = st.sidebar.file_uploader('Upload Damaged File 3', type="txt")
     st.sidebar.header("2. Grid & Interpolation")
     # Kept resolution reasonable to prevent high-frequency noise artifacts
     resolution = st.sidebar.slider("Grid Resolution (X-axis)", 50, 250, 150)
