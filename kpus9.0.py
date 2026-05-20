@@ -95,7 +95,6 @@ elif used_method == "3 mods":
         h1 = st.sidebar.file_uploader('Upload Healthy File 1', type="txt")
         h2 = st.sidebar.file_uploader('Upload Healthy File 2', type="txt")
         h3 = st.sidebar.file_uploader('Upload Healthy File 3', type="txt")
-    with st.sidebar.expander("Damaged mods"):
         d1 = st.sidebar.file_uploader('Upload Damaged File 1', type="txt")
         d2 = st.sidebar.file_uploader('Upload Damaged File 2', type="txt")
         d3 = st.sidebar.file_uploader('Upload Damaged File 3', type="txt")
