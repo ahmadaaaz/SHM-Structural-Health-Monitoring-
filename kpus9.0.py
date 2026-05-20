@@ -91,11 +91,11 @@ if used_method == "1 mod":
         ax.set_title("Damage Location Map")
         st.pyplot(fig)
 elif used_method == "3 mods":
-    with st.expander("Healthy mods"):
+    with st.sidebar.expander("Healthy mods"):
         h1 = st.sidebar.file_uploader('Upload Healthy File 1', type="txt")
         h2 = st.sidebar.file_uploader('Upload Healthy File 2', type="txt")
         h3 = st.sidebar.file_uploader('Upload Healthy File 3', type="txt")
-    with st.expander("Damaged mods"):
+    with st.sidebar.expander("Damaged mods"):
         d1 = st.sidebar.file_uploader('Upload Damaged File 1', type="txt")
         d2 = st.sidebar.file_uploader('Upload Damaged File 2', type="txt")
         d3 = st.sidebar.file_uploader('Upload Damaged File 3', type="txt")
