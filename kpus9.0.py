@@ -189,36 +189,35 @@ elif used_method == "3 mods":
         st.write('## not ok')
         i=0
 
-if i==1:
-        report_text = f"""
-        Grid Resolution ={resolution}pixel 
-        blur value = {pre_smooth}
-        Epsilon = {epsilon_pct}%    
-        """
-        def Make_PDF(fig):
-            buf = io.BytesIO()
+def Make_PDF(fig):
+    buf = io.BytesIO()
         
             # Use PdfPages to write multiple elements sequentially
-            with PdfPages(buf) as pdf:
+    with PdfPages(buf) as pdf:
         
-                # 1. Create a blank page for your text
-                fig_text = plt.figure(figsize=(8.5, 11))
-                fig_text.clf()
+        # 1. Create a blank page for your text
+        fig_text = plt.figure(figsize=(8.5, 11))
+        fig_text.clf()
         
-                # Add your text using page coordinates (0.1 = 10% from left, 0.9 = 90% from bottom)
-                fig_text.text(
-                    0.1, 0.9, report_text, fontsize=14, fontfamily="monospace", va="top"
-                )
+        # Add your text using page coordinates (0.1 = 10% from left, 0.9 = 90% from bottom)
+        fig_text.text(0.1, 0.9, report_text, fontsize=14, fontfamily="monospace", va="top")
         
-                # Save text page, then close it to free memory
-                pdf.savefig(fig_text)
-                plt.close(fig_text)
+        # Save text page, then close it to free memory
+        pdf.savefig(fig_text)
+        plt.close(fig_text)
         
-                # 2. Save your plot figure to the next page
-                pdf.savefig(fig, bbox_inches="tight")
+        # 2. Save your plot figure to the next page
+        pdf.savefig(fig, bbox_inches="tight")
 
-            buf.seek(0)
-            return buf.getvalue()
-        pdf_bytes = Make_PDF(fig)
+    buf.seek(0)
+    return buf.getvalue()
+
+if i==1:
+    report_text = f"""
+    Grid Resolution ={resolution}pixel 
+    blur value = {pre_smooth}
+    Epsilon = {epsilon_pct}%    
+    """
+    pdf_bytes = Make_PDF(fig)
         
-        st.download_button(label="Download PDF report", data=pdf_bytes, file_name="Hasar Heatmap", mime="application/pdf")
+    st.download_button(label="Download PDF report", data=pdf_bytes, file_name="Hasar Heatmap", mime="application/pdf")
