@@ -4,6 +4,10 @@ import numpy as np
 from scipy.interpolate import griddata
 import scipy.ndimage as ndimage
 import matplotlib.pyplot as plt
+from fpdf import FPDF
+import io
+
+i=0
 
 # setting up
 st.set_page_config(page_title="SHM", page_icon="https://github.com/ahmadaaaz/SHM-Structural-Health-Monitoring-/blob/1b40487d35657458dd4be5c577a0c1fc529e5b6f/ecf.png")
@@ -90,6 +94,7 @@ if used_method == "1 mod":
         plt.colorbar(im, label="Damage Severity")
         ax.set_title("Damage Location Map")
         st.pyplot(fig)
+        i=1
 elif used_method == "3 mods":
     with st.sidebar.expander("Healthy mods"):
         h1 = st.file_uploader('Upload Healthy File 1', type="txt")
@@ -178,6 +183,19 @@ elif used_method == "3 mods":
         im = ax.imshow(di_total.T, origin='lower', extent=[xi.min(), xi.max(), yi.min(), yi.max()], cmap=heat_color) #vmax=vmax_val)
         plt.colorbar(im, label="Fused Intensity")
         st.pyplot(fig)
+        i=1
     else:
         st.write("Please upload 6 mode files (healthy + Damaged) to perform Multi-Mode Fusion.")
-    st.write('## not ok')
+        st.write('## not ok')
+        i=0
+
+if i==1:
+    def Make_PDF(fig):
+        buf = io.BytesIO()
+        fig.savefig(buf, format="pdf", bbox_inches="tight")
+        buf.seek(0)
+        return buf.getvalue()
+
+    pdf_bytes = Make_PDF(fig)
+
+    st.download_button(label="Download PDF report", data=pdf_bytes, file_name="Hasar Heatmap", mime="application/pdf")
