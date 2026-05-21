@@ -190,12 +190,33 @@ elif used_method == "3 mods":
         i=0
 
 if i==1:
-    def Make_PDF(fig):
-        buf = io.BytesIO()
-        fig.savefig(buf, format="pdf", bbox_inches="tight")
-        buf.seek(0)
-        return buf.getvalue()
+    try:        
+        def Make_PDF(fig):
+            buf = io.BytesIO()
+        
+            # Use PdfPages to write multiple elements sequentially
+            with PdfPages(buf) as pdf:
+        
+                # 1. Create a blank page for your text
+                fig_text = plt.figure(figsize=(8.5, 11))
+                fig_text.clf()
+        
+                # Add your text using page coordinates (0.1 = 10% from left, 0.9 = 90% from bottom)
+                fig_text.text(
+                    0.1, 0.9, report_text, fontsize=14, fontfamily="monospace", va="top"
+                )
+        
+                # Save text page, then close it to free memory
+                pdf.savefig(fig_text)
+                plt.close(fig_text)
+        
+                # 2. Save your plot figure to the next page
+                pdf.savefig(fig, bbox_inches="tight")
 
-    pdf_bytes = Make_PDF(fig)
-
-    st.download_button(label="Download PDF report", data=pdf_bytes, file_name="Hasar Heatmap", mime="application/pdf")
+            buf.seek(0)
+            return buf.getvalue()
+        pdf_bytes = Make_PDF(fig)
+        
+        st.download_button(label="Download PDF report", data=pdf_bytes, file_name="Hasar Heatmap", mime="application/pdf")
+    except:
+        st.error("pdf not available", icon="❗")
