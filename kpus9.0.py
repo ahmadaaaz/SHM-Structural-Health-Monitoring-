@@ -223,5 +223,5 @@ if i==1:
         pdf_bytes = Make_PDF(fig)
         
         st.download_button(label="Download PDF report", data=pdf_bytes, file_name="Hasar Heatmap", mime="application/pdf")
-    except:
-        st.error("pdf not available", icon="❗")
+    #except:
+     #   st.error("pdf not available", icon="❗")
