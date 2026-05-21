@@ -29,7 +29,7 @@ if used_method == "1 mod":
     def load_and_project(file):
         df = pd.read_csv(file, sep='\t')
         df.columns = df.columns.str.strip()
-        return df.sort_values('Z Location (m)').drop_duplicates(subset=['X Location (m)', 'Y Location (m)'], keep='last')
+        return df.sort_values('Z Location (m)').drop_duplicates(subset=['X Location (m)', 'Y Location (m)'], keep='first')
     def compute_strain_energy(w, dx, dy, nu=0.33):
         # First derivatives
         dw_dy, dw_dx = np.gradient(w, dy, dx)
