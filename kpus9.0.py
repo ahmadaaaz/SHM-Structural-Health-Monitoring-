@@ -190,7 +190,12 @@ elif used_method == "3 mods":
         i=0
 
 if i==1:
-    try:        
+    try:
+        report_text = f"""
+        Grid Resolution ={resolution}pixel 
+        blur value = {pre_smooth}
+        Epsilon = {epsilon_pct}%    
+        """
         def Make_PDF(fig):
             buf = io.BytesIO()
         
