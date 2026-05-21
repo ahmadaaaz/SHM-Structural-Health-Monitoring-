@@ -14,7 +14,7 @@ heat_color = st.sidebar.selectbox("Choose color pallette", ['viridis', 'plasma',
 if used_method == "1 mod":
     healthy_file = st.sidebar.file_uploader('Upload Healthy File', type="txt")
     damaged_file = st.sidebar.file_uploader('Upload Damaged File', type="txt")
-    st.write('## maybe')
+    st.write('## tek mod yöntemi')
     st.sidebar.header("2. Grid & Interpolation")
     # Kept resolution reasonable to prevent high-frequency noise artifacts
     resolution = st.sidebar.slider("Grid Resolution (X-axis)", 50, 250, 150)
