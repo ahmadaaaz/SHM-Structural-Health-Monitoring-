@@ -190,7 +190,6 @@ elif used_method == "3 mods":
         i=0
 
 if i==1:
-    try:
         report_text = f"""
         Grid Resolution ={resolution}pixel 
         blur value = {pre_smooth}
@@ -223,5 +222,3 @@ if i==1:
         pdf_bytes = Make_PDF(fig)
         
         st.download_button(label="Download PDF report", data=pdf_bytes, file_name="Hasar Heatmap", mime="application/pdf")
-    #except:
-     #   st.error("pdf not available", icon="❗")
