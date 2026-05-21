@@ -6,6 +6,7 @@ import scipy.ndimage as ndimage
 import matplotlib.pyplot as plt
 from fpdf import FPDF
 import io
+from matplotlib.backends.backend_pdf import PdfPages
 
 i=0
 
