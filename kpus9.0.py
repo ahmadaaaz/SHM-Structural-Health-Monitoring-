@@ -10,7 +10,6 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 i=0
 
-# setting up
 st.set_page_config(page_title="SHM", page_icon="https://github.com/ahmadaaaz/SHM-Structural-Health-Monitoring-/blob/1b40487d35657458dd4be5c577a0c1fc529e5b6f/ecf.png")
 st.write('## Panellerdeki Hasarı Titreşim yoluyla Tespiti')
 
@@ -21,27 +20,25 @@ if used_method == "1 mod":
     damaged_file = st.sidebar.file_uploader('Upload Damaged File', type="txt")
     st.write('## tek mod yöntemi')
     st.sidebar.header("2. Grid & Interpolation")
-    # Kept resolution reasonable to prevent high-frequency noise artifacts
+
     resolution = st.sidebar.slider("Grid Resolution (X-axis)", 50, 250, 150)
     interp_method = "linear"
     st.sidebar.header("3. Signal Processing")
 
-    # Pre-smoothing is critical before taking gradients
     pre_smooth = st.sidebar.slider("Pre-Gradient Smoothing (Sigma)", 1.0, 5.0, 2.0, step=0.5)
 
-    # Epsilon prevents dividing by zero in rigid areas (like the wing tip)
     epsilon_pct = st.sidebar.slider("Denominator Epsilon (%)", 0.1, 10.0, 1.0, step=0.5, help="Stabilizes the Damage Index in areas of very low strain energy.")
     def load_and_project(file):
         df = pd.read_csv(file, sep='\t')
         df.columns = df.columns.str.strip()
         return df.sort_values('Z Location (m)').drop_duplicates(subset=['X Location (m)', 'Y Location (m)'], keep='first')
     def compute_strain_energy(w, dx, dy, nu=0.33):
-        # First derivatives
+
         dw_dy, dw_dx = np.gradient(w, dy, dx)
-        # Second derivatives
+
         d2w_dy2, d2w_dydx = np.gradient(dw_dy, dy, dx)
         d2w_dxdy, d2w_dx2 = np.gradient(dw_dx, dy, dx)
-        # Strain energy formulation
+
         energy = (d2w_dx2**2 + d2w_dy2**2) + (2 * nu * d2w_dx2 * d2w_dy2) + (2 * (1 - nu) * d2w_dydx**2)
         return energy
 
@@ -84,10 +81,9 @@ if used_method == "1 mod":
         damage_index[damage_index < 0] = 0
         damage_index[~mask_eroded] = np.nan # Hide outside edges
 
-        #----------------------- need Code Walkthrough    -----------------------
-        #st.write(h_df)
 
         fig, ax = plt.subplots(figsize=(10, 4))
+        
         # Vmax sets the color scale to the 99th percentile, keeping one massive spike from ruining the colors
         vmax_val = np.nanpercentile(damage_index, 99) 
         im = ax.imshow(damage_index.T, origin='lower', extent=[x_min, x_max, y_min, y_max], 
@@ -106,46 +102,40 @@ elif used_method == "3 mods":
         d2 = st.file_uploader('Upload Damaged File 2', type="txt")
         d3 = st.file_uploader('Upload Damaged File 3', type="txt")
     st.sidebar.header("2. Grid & Interpolation")
-    # Kept resolution reasonable to prevent high-frequency noise artifacts
+
     resolution = st.sidebar.slider("Grid Resolution (X-axis)", 50, 250, 150)
     interp_method = "linear"
     st.sidebar.header("3. Signal Processing")
+    
     # Pre-smoothing is critical before taking gradients
     pre_smooth = st.sidebar.slider("Pre-Gradient Smoothing (Sigma)", 1.0, 5.0, 2.0, step=0.5)
+    
     # Epsilon prevents dividing by zero in rigid areas (like the wing tip)
     epsilon_pct = st.sidebar.slider("Denominator Epsilon (%)", 0.1, 10.0, 1.0, step=0.5, help="Stabilizes the Damage Index in areas of very low strain energy.")
 
     def get_damage_index(h_file, d_file, resolution, sigma, eps_p):
-        """Computes Normalized Damage Index for a single mode pair."""
-        # Load and clean
         df_h = pd.read_csv(h_file, sep='\t').rename(columns=lambda x: x.strip())
         df_d = pd.read_csv(d_file, sep='\t').rename(columns=lambda x: x.strip())
         
-        # 2D Projection (Top Skin)
         proj_h = df_h.sort_values('Z Location (m)').drop_duplicates(subset=['X Location (m)', 'Y Location (m)'], keep='last')
         proj_d = df_d.sort_values('Z Location (m)').drop_duplicates(subset=['X Location (m)', 'Y Location (m)'], keep='last')
 
-        # Grid Setup
         x, y = proj_h['X Location (m)'], proj_h['Y Location (m)']
         xi, yi = np.mgrid[x.min():x.max():complex(0, resolution), y.min():y.max():complex(0, int(resolution * (y.max()-y.min())/(x.max()-x.min())))]
         dx, dy = (x.max()-x.min())/resolution, (y.max()-y.min())/yi.shape[1]
 
-        # Interpolation & Smoothing
         wi_h = ndimage.gaussian_filter(np.nan_to_num(griddata((x, y), proj_h['Total Deformation (m)'], (xi, yi), method='linear')), sigma)
         wi_d = ndimage.gaussian_filter(np.nan_to_num(griddata((x, y), proj_d['Total Deformation (m)'], (xi, yi), method='linear')), sigma)
         
-        # Equation (15) from Reference: image_8475f4.png
         def energy(w):
             nu = 0.33
             g1y, g1x = np.gradient(w, dy, dx)
             g2y2, g2yx = np.gradient(g1y, dy, dx)
             g2xy, g2x2 = np.gradient(g1x, dy, dx)
-            # Full bending + torsion + Poisson coupling
             return (g2x2**2 + g2y2**2) + (2 * nu * g2x2 * g2y2) + (2 * (1 - nu) * g2yx**2)
 
         e_h, e_d = energy(wi_h), energy(wi_d)
         
-        # Local Normalization
         mask = ~np.isnan(griddata((x, y), proj_h['Total Deformation (m)'], (xi, yi), method='linear'))
         mask = ndimage.binary_erosion(mask, iterations=3)
         
@@ -158,7 +148,6 @@ elif used_method == "3 mods":
         di[~mask] = np.nan
         return di, xi, yi, proj_d
     if all([h1, h2, h3, d1, d2, d3]):
-        # Compute for each mode
         di1, xi, yi, raw_d = get_damage_index(h1, d1, resolution, pre_smooth, epsilon_pct)
         di2, _, _, _ = get_damage_index(h2, d2, resolution, pre_smooth, epsilon_pct)
         di3, _, _, _ = get_damage_index(h3, d3, resolution, pre_smooth, epsilon_pct)
@@ -180,6 +169,7 @@ elif used_method == "3 mods":
         if st.checkbox("testing"):
             di_total = di_total / np.nanmax(di_total)
         fig, ax = plt.subplots(figsize=(10, 4))
+        
         #vmax_val = np.nanpercentile(di_total, 99) # Look at the 99th
         im = ax.imshow(di_total.T, origin='lower', extent=[xi.min(), xi.max(), yi.min(), yi.max()], cmap=heat_color) #vmax=vmax_val)
         plt.colorbar(im, label="Fused Intensity")
