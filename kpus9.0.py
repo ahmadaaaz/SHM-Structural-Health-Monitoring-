@@ -151,17 +151,15 @@ elif used_method == "3 mods":
         di1, xi, yi, raw_d = get_damage_index(h1, d1, resolution, pre_smooth, epsilon_pct)
         di2, _, _, _ = get_damage_index(h2, d2, resolution, pre_smooth, epsilon_pct)
         di3, _, _, _ = get_damage_index(h3, d3, resolution, pre_smooth, epsilon_pct)
-        s_p = st.sidebar.selectbox("Seri/Paralel", ["normal", "paralel","Product (Strict)", "RMS (Balanced)"])
-        if s_p == "normal":
-            di_total = ((di1/np.nanmax(di1)) + (di2/np.nanmax(di2)) + (di3/np.nanmax(di3)))
-        elif s_p == "paralel":
+        s_p = st.sidebar.selectbox("Seri/Paralel", ["paralel","Product (Strict)", "RMS"])
+        if s_p == "paralel":
             di_total = (1/(di1/np.nanmax(di1)) + 1/(di2/np.nanmax(di2)) + 1/(di3/np.nanmax(di3)))**-1
         elif s_p == "Product (Strict)":
             di1_c = np.maximum(di1, 0)
             di2_c = np.maximum(di2, 0)
             di3_c = np.maximum(di3, 0)
             di_total = di1_c * di2_c * di3_c        
-        elif s_p == "RMS (Balanced)":
+        elif s_p == "RMS":
             di1_c = np.maximum(di1, 0)
             di2_c = np.maximum(di2, 0)
             di3_c = np.maximum(di3, 0)
