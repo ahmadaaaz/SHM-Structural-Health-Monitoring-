@@ -8,8 +8,6 @@ from fpdf import FPDF
 import io
 from matplotlib.backends.backend_pdf import PdfPages
 
-i=0
-
 st.set_page_config(page_title="SHM", page_icon="https://github.com/ahmadaaaz/SHM-Structural-Health-Monitoring-/blob/1b40487d35657458dd4be5c577a0c1fc529e5b6f/ecf.png")
 st.write('## Panellerdeki Hasarı Titreşim yoluyla Tespiti')
 
@@ -91,7 +89,6 @@ if used_method == "1 mod":
         plt.colorbar(im, label="Hasar Şiddeti")
         ax.set_title("Damage Location Map")
         st.pyplot(fig)
-        i=1
 elif used_method == "3 mods":
     with st.sidebar.expander("Healthy mods"):
         h1 = st.file_uploader('Upload Healthy File 1', type="txt")
@@ -170,7 +167,6 @@ elif used_method == "3 mods":
         im = ax.imshow(di_total.T, origin='lower', extent=[xi.min(), xi.max(), yi.min(), yi.max()], cmap=heat_color) #vmax=vmax_val)
         plt.colorbar(im, label="Hasar Şiddeti")
         st.pyplot(fig)
-        i=1
     else:
         st.write("Please upload 6 mode files (healthy + Damaged) to perform Multi-Mode Fusion.")
         st.write('## not ok')
@@ -191,20 +187,19 @@ def Make_PDF(fig):
         
         # Save text page, then close it to free memory
         pdf.savefig(fig_text)
+        pdf.savefig(fig, bbox_inches="tight")
         plt.close(fig_text)
         
         # 2. Save your plot figure to the next page
-        pdf.savefig(fig, bbox_inches="tight")
 
     buf.seek(0)
     return buf.getvalue()
 
-if i==1:
+if fig is not None:
     report_text = f"""
     Grid Resolution ={resolution}pixel 
     blur value = {pre_smooth}
     Epsilon = {epsilon_pct}%    
     """
     pdf_bytes = Make_PDF(fig)
-        
     st.download_button(label="Download PDF report", data=pdf_bytes, file_name="Hasar Heatmap", mime="application/pdf")
