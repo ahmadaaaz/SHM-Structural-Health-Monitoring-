@@ -177,17 +177,16 @@ def Make_PDF(fig):
         
             # Use PdfPages to write multiple elements sequentially
     with PdfPages(buf) as pdf:
-        
+        pdf.savefig(fig, bbox_inches="tight")
         # 1. Create a blank page for your text
         fig_text = plt.figure(figsize=(8.5, 11))
         fig_text.clf()
         
         # Add your text using page coordinates (0.1 = 10% from left, 0.9 = 90% from bottom)
-        fig_text.text(0.1, 0.9, report_text, fontsize=14, fontfamily="monospace", va="top")
+        fig_text.text(0.1, 0.9, report_text, fontsize=14, fontfamily="monospace", va="bottom")
         
         # Save text page, then close it to free memory
         pdf.savefig(fig_text)
-        pdf.savefig(fig, bbox_inches="tight")
         plt.close(fig_text)
         
         # 2. Save your plot figure to the next page
@@ -203,3 +202,5 @@ if fig is not None:
     """
     pdf_bytes = Make_PDF(fig)
     st.download_button(label="Download PDF report", data=pdf_bytes, file_name="Hasar Heatmap", mime="application/pdf")
+else:
+    pass
