@@ -185,9 +185,9 @@ def Make_PDF(fig, report_text):
 
     pdf.image("heatmap.png", x=10, y=y_pos, w=180)
     return pdf.output(dest="S").encode("latin1")
-    
-if fig is not None:
-    try:
+
+try:    
+    if fig is not None:
         report_text = f"""
         Grid Resolution ={resolution}pixel 
         blur value = {pre_smooth}
@@ -195,5 +195,5 @@ if fig is not None:
         """
         pdf_bytes = Make_PDF(fig, report_text)
         st.download_button(label="Download PDF report", data=pdf_bytes, file_name="Hasar Heatmap", mime="application/pdf")
-    except:
+except:
         st.error("can't give pdf")
