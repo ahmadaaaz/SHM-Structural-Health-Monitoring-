@@ -195,3 +195,5 @@ if fig is not None:
         """
         pdf_bytes = Make_PDF(fig, report_text)
         st.download_button(label="Download PDF report", data=pdf_bytes, file_name="Hasar Heatmap", mime="application/pdf")
+    except:
+        st.error("can't give pdf")
