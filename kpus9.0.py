@@ -178,12 +178,10 @@ def Make_PDF(fig, report_text):
     pdf.add_page()
     pdf.set_font("Times", size=12)
 
-    # Add text
+    pdf.image("heatmap.png", x=10, y=y_pos, w=180)
+    pdf.set_y(100)
     pdf.multi_cell(0, 8, report_text)
 
-    y_pos = pdf.get_y() + 5
-
-    pdf.image("heatmap.png", x=10, y=y_pos, w=180)
     return pdf.output(dest="S").encode("latin1")
 
 try:    
