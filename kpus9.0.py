@@ -172,35 +172,26 @@ elif used_method == "3 mods":
         st.write('## not ok')
         i=0
 
-def Make_PDF(fig):
-    buf = io.BytesIO()
-        
-            # Use PdfPages to write multiple elements sequentially
-    with PdfPages(buf) as pdf:
-        pdf.savefig(fig, bbox_inches="tight")
-        # 1. Create a blank page for your text
-        fig_text = plt.figure(figsize=(8.5, 11))
-        fig_text.clf()
-        
-        # Add your text using page coordinates (0.1 = 10% from left, 0.9 = 90% from bottom)
-        fig_text.text(0.1, 0.9, report_text, fontsize=14, fontfamily="monospace", va="bottom")
-        
-        # Save text page, then close it to free memory
-        pdf.savefig(fig_text)
-        plt.close(fig_text)
-        
-        # 2. Save your plot figure to the next page
+def Make_PDF(fig, report_text):
+    fig.savefig("heatmap.png", dpi=300, bbox_inches="tight")
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Times", size=12)
 
-    buf.seek(0)
-    return buf.getvalue()
+    # Add text
+    pdf.multi_cell(0, 8, report_text)
 
+    y_pos = pdf.get_y() + 5
+
+    pdf.image("heatmap.png", x=10, y=y_pos, w=180)
+    return pdf.output(dest="S").encode("latin1")
+    
 if fig is not None:
-    report_text = f"""
-    Grid Resolution ={resolution}pixel 
-    blur value = {pre_smooth}
-    Epsilon = {epsilon_pct}%    
-    """
-    pdf_bytes = Make_PDF(fig)
-    st.download_button(label="Download PDF report", data=pdf_bytes, file_name="Hasar Heatmap", mime="application/pdf")
-else:
-    pass
+    try:
+        report_text = f"""
+        Grid Resolution ={resolution}pixel 
+        blur value = {pre_smooth}
+        Epsilon = {epsilon_pct}%    
+        """
+        pdf_bytes = Make_PDF(fig, report_text)
+        st.download_button(label="Download PDF report", data=pdf_bytes, file_name="Hasar Heatmap", mime="application/pdf")
