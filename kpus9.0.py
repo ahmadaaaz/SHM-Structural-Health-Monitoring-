@@ -88,7 +88,7 @@ if used_method == "1 mod":
         vmax_val = np.nanpercentile(damage_index, 99) 
         im = ax.imshow(damage_index.T, origin='lower', extent=[x_min, x_max, y_min, y_max], 
                        cmap=heat_color, aspect='auto', vmax=vmax_val)
-        plt.colorbar(im, label="Damage Severity")
+        plt.colorbar(im, label="Hasar Şiddeti")
         ax.set_title("Damage Location Map")
         st.pyplot(fig)
         i=1
@@ -164,13 +164,11 @@ elif used_method == "3 mods":
             di2_c = np.maximum(di2, 0)
             di3_c = np.maximum(di3, 0)
             di_total = np.sqrt((di1_c**2 + di2_c**2 + di3_c**2) / 3)
-        if st.checkbox("testing"):
-            di_total = di_total / np.nanmax(di_total)
         fig, ax = plt.subplots(figsize=(10, 4))
         
         #vmax_val = np.nanpercentile(di_total, 99) # Look at the 99th
         im = ax.imshow(di_total.T, origin='lower', extent=[xi.min(), xi.max(), yi.min(), yi.max()], cmap=heat_color) #vmax=vmax_val)
-        plt.colorbar(im, label="Fused Intensity")
+        plt.colorbar(im, label="Hasar Şiddeti")
         st.pyplot(fig)
         i=1
     else:
