@@ -174,11 +174,12 @@ elif used_method == "3 mods":
 
 def Make_PDF(fig, report_text):
     fig.savefig("heatmap.png", dpi=300, bbox_inches="tight")
+    
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Times", size=12)
 
-    pdf.image("heatmap.png", x=10, y=y_pos, w=180)
+    pdf.image("heatmap.png", x=10, w=180)
     pdf.set_y(100)
     pdf.multi_cell(0, 8, report_text)
 
