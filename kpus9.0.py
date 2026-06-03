@@ -13,7 +13,7 @@ st.write('## Titreşim Tabanlı Yapısal Sağlık İzleme')
 
 used_method = st.sidebar.selectbox("what method",["tek modlu","çok modlu"])
 heat_color = st.sidebar.selectbox("Choose color pallette", ['viridis', 'plasma', 'inferno', 'magma', 'cividis'])
-if used_method == "1 mod":
+if used_method == "tek modlu":
     healthy_file = st.sidebar.file_uploader('Upload Healthy File', type="txt")
     damaged_file = st.sidebar.file_uploader('Upload Damaged File', type="txt")
     st.write('### tek mod yöntemi')
@@ -89,7 +89,7 @@ if used_method == "1 mod":
         plt.colorbar(im, label="Hasar Şiddeti")
         ax.set_title("Damage Location Map")
         st.pyplot(fig)
-elif used_method == "3 mods":
+elif used_method == "çok modlu":
     with st.sidebar.expander("Healthy mods"):
         h1 = st.file_uploader('Upload Healthy File 1', type="txt")
         h2 = st.file_uploader('Upload Healthy File 2', type="txt")
