@@ -9,14 +9,14 @@ import io
 from matplotlib.backends.backend_pdf import PdfPages
 
 st.set_page_config(page_title="SHM", page_icon="https://github.com/ahmadaaaz/SHM-Structural-Health-Monitoring-/blob/1b40487d35657458dd4be5c577a0c1fc529e5b6f/ecf.png")
-st.write('## Panellerdeki Hasarı Titreşim yoluyla Tespiti')
+st.write('## Titreşim Tabanlı Yapısal Sağlık İzleme')
 
-used_method = st.sidebar.selectbox("what method",["1 mod","3 mods"])
+used_method = st.sidebar.selectbox("what method",["tek modlu","çok modlu"])
 heat_color = st.sidebar.selectbox("Choose color pallette", ['viridis', 'plasma', 'inferno', 'magma', 'cividis'])
 if used_method == "1 mod":
     healthy_file = st.sidebar.file_uploader('Upload Healthy File', type="txt")
     damaged_file = st.sidebar.file_uploader('Upload Damaged File', type="txt")
-    st.write('## tek mod yöntemi')
+    st.write('### tek mod yöntemi')
     st.sidebar.header("2. Grid & Interpolation")
 
     resolution = st.sidebar.slider("Grid Resolution (X-axis)", 50, 250, 150)
@@ -167,10 +167,6 @@ elif used_method == "3 mods":
         im = ax.imshow(di_total.T, origin='lower', extent=[xi.min(), xi.max(), yi.min(), yi.max()], cmap=heat_color) #vmax=vmax_val)
         plt.colorbar(im, label="Hasar Şiddeti")
         st.pyplot(fig)
-    else:
-        st.write("Please upload 6 mode files (healthy + Damaged) to perform Multi-Mode Fusion.")
-        st.write('## not ok')
-        i=0
 
 def Make_PDF(fig, report_text):
     fig.savefig("heatmap.png", dpi=300, bbox_inches="tight")
