@@ -210,7 +210,7 @@ try:
 except:
     pass
 
-streamlit.write('''
+st.write('''
 made by
 Ahmed Ashraf Elsayed Zaghloul -- ahmed.zaghloul.ae@gmail.com
 &
