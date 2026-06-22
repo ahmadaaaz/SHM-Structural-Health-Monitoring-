@@ -183,7 +183,24 @@ def Make_PDF(fig, report_text):
 
 try:    
     if fig is not None:
+        used_files = []
+        # Single-mode
+        if 'healthy_file' in locals() and healthy_file is not None:
+            used_files.append(f"Healthy: {healthy_file.name}")
+        if 'damaged_file' in locals() and damaged_file is not None:
+            used_files.append(f"Damaged: {damaged_file.name}")
+        
+        # Multi-mode
+        for var_name, label in [
+            ('h1', 'Healthy 1'), ('h2', 'Healthy 2'), ('h3', 'Healthy 3'),
+            ('d1', 'Damaged 1'), ('d2', 'Damaged 2'), ('d3', 'Damaged 3')
+        ]:
+            if var_name in locals() and locals()[var_name] is not None:
+                used_files.append(f"{label}: {locals()[var_name].name}")
+
+files_text = "\n".join(used_files)
         report_text = f"""
+        Files Used: {used_files}
         Grid Resolution ={resolution}pixel 
         blur value = {pre_smooth}
         Epsilon = {epsilon_pct}%    
