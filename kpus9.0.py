@@ -198,8 +198,9 @@ try:
             if var_name in locals() and locals()[var_name] is not None:
                 used_files.append(f"{label}: {locals()[var_name].name}")
 
-    files_text = "\n".join(used_files)
+        files_text = "\n".join(used_files)
         report_text = f"""
+        Files Used: {files_text}
         Grid Resolution ={resolution}pixel 
         blur value = {pre_smooth}
         Epsilon = {epsilon_pct}%    
