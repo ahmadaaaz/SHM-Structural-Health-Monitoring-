@@ -200,7 +200,6 @@ try:
 
 files_text = "\n".join(used_files)
         report_text = f"""
-        Files Used: {used_files}
         Grid Resolution ={resolution}pixel 
         blur value = {pre_smooth}
         Epsilon = {epsilon_pct}%    
@@ -209,3 +208,11 @@ files_text = "\n".join(used_files)
         st.download_button(label="Download PDF report", data=pdf_bytes, file_name="Hasar Heatmap", mime="application/pdf")
 except:
     pass
+
+streamlit.text('''
+made by
+Ahmed Ashraf Elsayed Zaghloul -- ahmed.zaghloul.ae@gmail.com
+&
+MHD Yman Zain Al Abdien -- ymanzienalabdien@gmail.com
+
+''')
