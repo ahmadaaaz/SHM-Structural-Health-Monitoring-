@@ -7,15 +7,22 @@ import matplotlib.pyplot as plt
 from fpdf import FPDF
 import io
 from matplotlib.backends.backend_pdf import PdfPages
+import os
 
 st.set_page_config(page_title="SHM", page_icon="https://github.com/ahmadaaaz/SHM-Structural-Health-Monitoring-/blob/1b40487d35657458dd4be5c577a0c1fc529e5b6f/ecf.png")
 st.write('## Titreşim Tabanlı Yapısal Sağlık İzleme')
 
-used_method = st.sidebar.selectbox("what method",["tek modlu","çok modlu"])
+use_sample = st.sidebar.checkbox("Use sample data")
+
+used_method = st.sidebar.selectbox("what method",["Using Single Mod Shape","Using Multiple Mod Shapes"])
 heat_color = st.sidebar.selectbox("Choose color pallette", ['viridis', 'plasma', 'inferno', 'magma', 'cividis'])
-if used_method == "tek modlu":
-    healthy_file = st.sidebar.file_uploader('Upload Healthy File', type="txt")
-    damaged_file = st.sidebar.file_uploader('Upload Damaged File', type="txt")
+if used_method == "Using Single Mod Shape":
+    if use_sample:
+        healthy_file = os.path.join("sample_data", "mod1 healthy.txt")
+        damaged_file = os.path.join("sample_data", "mod1 damaged.txt")
+    else:
+        healthy_file = st.sidebar.file_uploader('Upload Healthy File', type="txt")
+        damaged_file = st.sidebar.file_uploader('Upload Damaged File', type="txt")
     st.write('### tek mod yöntemi')
     st.sidebar.header("2. Grid & Interpolation")
 
@@ -89,15 +96,24 @@ if used_method == "tek modlu":
         plt.colorbar(im, label="Hasar Şiddeti")
         ax.set_title("Damage Location Map")
         st.pyplot(fig)
-elif used_method == "çok modlu":
-    with st.sidebar.expander("Healthy mods"):
-        h1 = st.file_uploader('Upload Healthy File 1', type="txt")
-        h2 = st.file_uploader('Upload Healthy File 2', type="txt")
-        h3 = st.file_uploader('Upload Healthy File 3', type="txt")
-    with st.sidebar.expander("Healthy mods"):
-        d1 = st.file_uploader('Upload Damaged File 1', type="txt")
-        d2 = st.file_uploader('Upload Damaged File 2', type="txt")
-        d3 = st.file_uploader('Upload Damaged File 3', type="txt")
+elif used_method == "Using Multiple Mod Shapes":
+    if use_sample:
+        h1 = os.path.join("sample_data","mod1 healthy.txt")
+        h2 = os.path.join("sample_data","mod2 healthy.txt")
+        h3 = os.path.join("sample_data","mod3 healthy.txt")
+    
+        d1 = os.path.join("sample_data","mod1 damaged.txt")
+        d2 = os.path.join("sample_data","mod2 damaged.txt")
+        d3 = os.path.join("sample_data","mod3 damaged.txt")
+    else:
+        with st.sidebar.expander("Healthy mods"):
+            h1 = st.file_uploader('Upload Healthy File 1', type="txt")
+            h2 = st.file_uploader('Upload Healthy File 2', type="txt")
+            h3 = st.file_uploader('Upload Healthy File 3', type="txt")
+        with st.sidebar.expander("Healthy mods"):
+            d1 = st.file_uploader('Upload Damaged File 1', type="txt")
+            d2 = st.file_uploader('Upload Damaged File 2', type="txt")
+            d3 = st.file_uploader('Upload Damaged File 3', type="txt")
     st.sidebar.header("2. Grid & Interpolation")
 
     resolution = st.sidebar.slider("Grid Resolution (X-axis)", 50, 250, 150)
