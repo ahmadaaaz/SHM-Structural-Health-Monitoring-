@@ -12,8 +12,12 @@ import os
 st.set_page_config(page_title="SHM", page_icon="https://github.com/ahmadaaaz/SHM-Structural-Health-Monitoring-/blob/1b40487d35657458dd4be5c577a0c1fc529e5b6f/ecf.png")
 st.write('## Titreşim Tabanlı Yapısal Sağlık İzleme')
 
-use_sample = st.sidebar.checkbox("Use sample data")
+def get_filename(f):
+    if isinstance(f, str):
+        return os.path.basename(f)
+    return f.name
 
+use_sample = st.sidebar.checkbox("Use sample data")
 used_method = st.sidebar.selectbox("what method",["Using Single Mod Shape","Using Multiple Mod Shapes"])
 heat_color = st.sidebar.selectbox("Choose color pallette", ['viridis', 'plasma', 'inferno', 'magma', 'cividis'])
 if used_method == "Using Single Mod Shape":
@@ -203,9 +207,9 @@ try:
         used_files = []
         # Single-mode
         if 'healthy_file' in locals() and healthy_file is not None:
-            used_files.append(f"Healthy: {healthy_file.name}")
+            used_files.append(f"Healthy: {get_filename(healthy_file)}")
         if 'damaged_file' in locals() and damaged_file is not None:
-            used_files.append(f"Damaged: {damaged_file.name}")
+            used_files.append(f"Damaged: {get_filename(damaged_file)}")
         
         # Multi-mode
         for var_name, label in [
@@ -213,7 +217,7 @@ try:
             ('d1', 'Damaged 1'), ('d2', 'Damaged 2'), ('d3', 'Damaged 3')
         ]:
             if var_name in locals() and locals()[var_name] is not None:
-                used_files.append(f"{label}: {locals()[var_name].name}")
+                used_files.append(f"{label}: {get_filename(locals()[var_name])}")
 
         files_text = "\n".join(used_files)
         report_text = f"""
