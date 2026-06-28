@@ -232,7 +232,6 @@ with st.bottom:
     st.caption('''
     made by  \n
     Ahmed Ashraf Elsayed Zaghloul  &  MHD Yman Zain Al Abdien 
- 
      
     ahmed.zaghloul.ae@gmail.com  --  ymanzienalabdien@gmail.com
     ''')
