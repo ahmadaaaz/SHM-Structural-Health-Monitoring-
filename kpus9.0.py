@@ -230,7 +230,5 @@ except:
 with st.bottom:
     st.caption('''
     made by \n
-    Ahmed Ashraf Elsayed Zaghloul -- ahmed.zaghloul.ae@gmail.com.  \n\n
-    & MHD Yman Zain Al Abdien -- ymanzienalabdien@gmail.com
-    
+    Ahmed Ashraf Elsayed Zaghloul -- ahmed.zaghloul.ae@gmail.com.  \n\n & MHD Yman Zain Al Abdien -- ymanzienalabdien@gmail.com
     ''')
