@@ -87,7 +87,7 @@ if used_method == "Using Single Mod Shape":
         #DI = (Ed-Eh)/(Eh+epsilon)
         damage_index = (energy_d_norm - energy_h_norm) / (energy_h_norm + epsilon)
         
-        # Apply soft thresholding (ignore negative "healing" values, keep positive damage)
+        # Apply soft thresholding (ignore negative "ing" values, keep positive damage)
         damage_index[damage_index < 0] = 0
         damage_index[~mask_eroded] = np.nan # Hide outside edges
 
@@ -115,7 +115,7 @@ elif used_method == "Using Multiple Mod Shapes":
             h1 = st.file_uploader('Upload Healthy File 1', type="txt")
             h2 = st.file_uploader('Upload Healthy File 2', type="txt")
             h3 = st.file_uploader('Upload Healthy File 3', type="txt")
-        with st.sidebar.expander("Healthy mods"):
+        with st.sidebar.expander("Damaged mods"):
             d1 = st.file_uploader('Upload Damaged File 1', type="txt")
             d2 = st.file_uploader('Upload Damaged File 2', type="txt")
             d3 = st.file_uploader('Upload Damaged File 3', type="txt")
