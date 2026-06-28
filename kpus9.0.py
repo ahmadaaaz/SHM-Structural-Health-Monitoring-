@@ -19,10 +19,9 @@ def get_filename(f):
 
 used_method = st.sidebar.selectbox("what method",["Using Single Mod Shape","Using Multiple Mod Shapes"])
 heat_color = st.sidebar.selectbox("Choose color pallette", ['viridis', 'plasma', 'inferno', 'magma', 'cividis'])
+use_sample = st.sidebar.checkbox("Use sample data")
 if used_method == "Using Single Mod Shape":
     st.warning("Using single mod shape method may end up with blind spots")
-use_sample = st.sidebar.checkbox("Use sample data")
-
     if use_sample:
         healthy_file = os.path.join("sample", "mod1 healthy.txt")
         damaged_file = os.path.join("sample", "mod1 damaged.txt")
