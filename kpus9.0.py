@@ -18,8 +18,8 @@ used_method = st.sidebar.selectbox("what method",["Using Single Mod Shape","Usin
 heat_color = st.sidebar.selectbox("Choose color pallette", ['viridis', 'plasma', 'inferno', 'magma', 'cividis'])
 if used_method == "Using Single Mod Shape":
     if use_sample:
-        healthy_file = os.path.join("sample_data", "mod1 healthy.txt")
-        damaged_file = os.path.join("sample_data", "mod1 damaged.txt")
+        healthy_file = os.path.join("sample", "mod1 healthy.txt")
+        damaged_file = os.path.join("sample", "mod1 damaged.txt")
     else:
         healthy_file = st.sidebar.file_uploader('Upload Healthy File', type="txt")
         damaged_file = st.sidebar.file_uploader('Upload Damaged File', type="txt")
@@ -98,13 +98,13 @@ if used_method == "Using Single Mod Shape":
         st.pyplot(fig)
 elif used_method == "Using Multiple Mod Shapes":
     if use_sample:
-        h1 = os.path.join("sample_data","mod1 healthy.txt")
-        h2 = os.path.join("sample_data","mod2 healthy.txt")
-        h3 = os.path.join("sample_data","mod3 healthy.txt")
+        h1 = os.path.join("sample","mod1 healthy.txt")
+        h2 = os.path.join("sample","mod2 healthy.txt")
+        h3 = os.path.join("sample","mod3 healthy.txt")
     
-        d1 = os.path.join("sample_data","mod1 damaged.txt")
-        d2 = os.path.join("sample_data","mod2 damaged.txt")
-        d3 = os.path.join("sample_data","mod3 damaged.txt")
+        d1 = os.path.join("sample","mod1 damaged.txt")
+        d2 = os.path.join("sample","mod2 damaged.txt")
+        d3 = os.path.join("sample","mod3 damaged.txt")
     else:
         with st.sidebar.expander("Healthy mods"):
             h1 = st.file_uploader('Upload Healthy File 1', type="txt")
